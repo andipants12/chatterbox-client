@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="../src/purify.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
@@ -30,14 +31,15 @@
         <input class="submit" type="submit" value="Add Room">
         <!-- adjust default behavior -->
       </form>
-      <select name="usernames" id="usernames">
-      </select>
+<!--       <select name="usernames" id="usernames">
+      </select> -->
       <!-- Your HTML goes here! -->
+      <select name="rooms" id="roomSelect">
+          <!--rooms will be appeneded after data is fetched-->
+      </select>
       <form id="send">
         <!--room selction menu-->
-        <select name="rooms" id="roomSelect">
-          <!--rooms will be appeneded after data is fetched-->
-        </select>
+
         <textarea name="messageinput" id="message"></textarea>
         <input class="submit" type="submit" value="Submit">
       </form>
