@@ -3,16 +3,22 @@ var app = {};
 
 app.friends = [];
 
+app.server = 'https://api.parse.com/1/classes/messages?order=-createdAt&limit=500';
+
 var fetchData;
 
 $(document).ready(function() {
   app.init = function() {
     app.fetch();
+
+
     $('#chats').on('click', '.chat a', function(event) { 
       var user = this.innerHTML;
       event.preventDefault();
       app.handleUsernameClick(user);
     });
+
+
     $('#send').submit(function(event) {
       event.preventDefault();
       app.handleSubmit();
@@ -25,7 +31,6 @@ $(document).ready(function() {
     $('select[name="rooms"]').change(function() {
 
       var selectedRoom = $(this).val();
-      console.log(fetchData.results, "data");
       var room = fetchData.results.filter(function(obj){
         return obj.roomname === selectedRoom;
       });
@@ -37,13 +42,11 @@ $(document).ready(function() {
 
   };
 
-  app.send = function() {
+  app.send = function(param = {}) {
     var length = window.location.search.length;
-    var param = {};
     param.username = window.location.search.slice(10, length);
     param.text = $('#message').val();
     param.roomname = $('#roomSelect').val();
-    console.log(param.username, "param object");
     $.ajax({
       url: 'https://api.parse.com/1/classes/messages',
       type: 'POST',
@@ -63,11 +66,12 @@ $(document).ready(function() {
   app.fetch = function() {
     $.ajax({
       //? ==> query, & seperates unique query
-      url: 'https://api.parse.com/1/classes/messages?order=-createdAt&limit=500',
+      url: 'https://api.parse.com/1/classes/messages?order=-createdAt&limit=100',
       type: 'GET',
             //success is a "promise method", return value of the sucess function is "data"
       success: function(data) {
         fetchData = data;
+        console.log(fetchData);
         var userInfo = {};
         var rooms = [];
         var textResults = data.results.forEach(function(obj) {
@@ -97,13 +101,12 @@ $(document).ready(function() {
     return $('#chats').remove();
   };
 
-  app.renderMessage = function(message) {
+  app.renderMessage = function(obj) {
     if (!document.getElementById('chats')) {
       $('body').append('<div id="chats"> </div>');
     }
-    $('#chats').append('<div>' + DOMPurify.sanitize(message) + '</div>');
+    $('#chats').append('<div class="chat"><a href="#" class="user">' + DOMPurify.sanitize(obj.username) + '</a>' + ' ' + DOMPurify.sanitize(obj.text) + '</div>');
     //mvp this passes the test, may need to append in a different funcion
-    $('#main').append('<div class="username"></div>');
   };
 
   app.renderRoom = function () {
@@ -118,12 +121,12 @@ $(document).ready(function() {
     if (!this.friends.includes(input)) {
       this.friends.push(input);
     }
-    console.log(app.friends,"friends")
+    console.log(this.friends);
   };
   app.handleSubmit = function() {
     var $message = $('textarea').val();
     // console.log($message);
-    app.renderMessage($message);
+    // app.renderMessage($message);
     app.fetch();
 
   };
